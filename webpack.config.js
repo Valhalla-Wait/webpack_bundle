@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // Импортируем плагин
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 let mode = 'development'; // По умолчанию режим development
 let target = 'web'
@@ -19,6 +20,10 @@ const plugins = [
     filename: '[name].[contenthash].css',
   }),
 ]; // Создаем массив плагинов
+
+if (process.env.SERVE) { // Используем плагин только если запускаем devServer
+  plugins.push(new ReactRefreshWebpackPlugin());
+}
 
 module.exports = {
   mode,
@@ -71,6 +76,16 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.jsx?$/, // обновляем регулярное выражение для поддержки jsx
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+          },
+        },
+      }
     ],
   }
 }
